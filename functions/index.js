@@ -15,9 +15,11 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
   response.send('Hello from Firebase!')
 })
 
+// 아래는 db에 저장하는 것 (authentication과 별도)
 // onRequest: 이 주소로 들어갈 때 그 위치에 있는 index.js 파일 발동, onCreate: 상관 없이 회원가입 될 때 발동
 exports.test = functions.https.onRequest(require('./test'))
 exports.admin = functions.https.onRequest(require('./admin'))
+
 exports.createUser = functions.auth.user().onCreate(async (user) => { // 사용자 레벨 별 권한설정 (백엔드 only)
   const { uid, email, displayName, emailVerified, photoURL, disabled } = user // emailverified, photoURL 은 삭제하기
   const claims = { level: 2 } // defualt : level 2

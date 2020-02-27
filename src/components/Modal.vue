@@ -1,14 +1,10 @@
 <template>
-<modal name="demo-login" transition="pop-out">
+<modal name="demo-login" transition="pop-out" :width="modalWidth" :height="700">
   <v-card color="transparent" height="500" flat>
     <v-form v-model="valid" ref="form" lazy-validation>
       <v-card-title primary-title>
         <span class="title">회원가입</span>
         <v-spacer></v-spacer>
-        <span class="caption">
-          또는&nbsp;
-          <a @click="$emit('changeType')">로그인</a>
-        </span>
       </v-card-title>
       <v-card-actions>
         <v-btn color="primary" block @click="signInWithGoogle">
@@ -76,15 +72,13 @@
 </template>
 
 <script>
+const MODAL_WIDTH = 656
+
 export default {
-  name: 'Modal',
-  props: {
-    value: {
-      required: true
-    }
-  },
+  name: 'DemoLoginModal',
   data () {
     return {
+      modalWidth: MODAL_WIDTH,
       form: {
         firstName: '',
         lastName: '',
@@ -102,10 +96,12 @@ export default {
       valid: false
     }
   },
+  created () {
+    this.modalWidth = window.innerWidth < MODAL_WIDTH
+      ? MODAL_WIDTH / 2
+      : MODAL_WIDTH
+  },
   methods: {
-    close () {
-      this.$emit('input', !this.value)
-    },
     async signInWithGoogle () {
       const provider = new this.$firebase.auth.GoogleAuthProvider()
       this.$firebase.auth().languageCode = 'ko'
@@ -116,7 +112,7 @@ export default {
       await this.$firebase.auth().createUserWithEmailAndPassword(this.form.email, this.form.password)
       const user = this.$firebase.auth().currentUser
       // eslint-disable-next-line no-unused-vars
-      const result = await user.updateProfile({
+      const result = await user.updateProfile({ // db에 onCreate 때문에 이게 저장 안되는 문제 어떻게 해결?
         displayName: `${this.form.lastName} ${this.form.firstName}`
       })
       // console.log(result)

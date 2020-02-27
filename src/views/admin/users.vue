@@ -1,5 +1,8 @@
+/* eslint-disable vue/no-unused-components */
+/* eslint-disable no-unused-vars */
 <template>
   <v-container grid-list-md>
+     <demo-login-modal/>
     <v-card>
       <v-toolbar
         dark
@@ -21,6 +24,9 @@
           solo-inverted
           clearable
         ></v-autocomplete>
+        <v-btn icon @click="list" :disabled="loading">
+          <v-icon>mdi-refresh</v-icon>
+        </v-btn>
       </v-toolbar>
       <v-container grid-list-md fluid>
         <v-data-iterator
@@ -46,39 +52,7 @@
                 md4
                 lg3
               >
-                <v-card>
-                  <!-- <v-card-title><h4>{{ item.displayName }}</h4></v-card-title>
-                  <v-divider></v-divider>
-                  <v-list dense>
-                    <v-list-item>
-                      <v-list-item-content>e:</v-list-item-content>
-                      <v-list-item-content class="align-end">{{ item.email }}</v-list-item-content>
-                    </v-list-item>
-                  </v-list> -->
-                  <!-- <v-card-title>
-                    {{item.email}}
-                  </v-card-title>
-                  <v-divider></v-divider> -->
-                  <v-list-item three-line>
-                    <v-list-item-avatar
-                      size="125"
-                      tile
-                      rounded
-                    >
-                      <v-img :src="item.photoURL | imgCheck"></v-img>
-                    </v-list-item-avatar>
-
-                    <v-list-item-content class="align-self-start">
-                      <v-list-item-title
-                        class="headline mb-2"
-                        v-text="item.email"
-                      ></v-list-item-title>
-
-                      <!-- <v-list-item-subtitle v-text="item.displayName | nameCheck"></v-list-item-subtitle> -->
-                      <v-list-item-subtitle>{{item.displayName | nameCheck}}</v-list-item-subtitle>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-card>
+                <user-card :item="item"></user-card>
               </v-flex>
             </v-layout>
           </template>
@@ -87,17 +61,22 @@
       </v-container>
     </v-card>
     <v-spacer></v-spacer>
-    <v-btn class="btn" @click="openModal">Open Modal</v-btn>
-    <modal-direction v-model="modalOpen"></modal-direction>
+     <button
+      class="btn green"
+      @click="$modal.show('demo-login')">
+      popup
+    </button>
   </v-container>
 </template>
 
 <script>
-import ModalDirection from '@/components/Modal'
+import DemoLoginModal from '@/components/Modal'
+import UserCard from '@/components/userCard'
 import _ from 'lodash' // 연속 입력 꼬임방지 위한 debounce 이용
 export default {
   components: {
-    ModalDirection
+    DemoLoginModal,
+    UserCard
   },
   data () {
     return {
@@ -122,8 +101,7 @@ export default {
       search: '',
       emails: [],
       email: null,
-      loadingSearch: false,
-      modalOpen: false
+      loadingSearch: false
     }
   },
   watch: {
@@ -140,20 +118,10 @@ export default {
       if (n !== o) this.list()
     }
   },
-  filters: {
-    nameCheck: function (v) {
-      if (v) return v
-      return 'no name'
-    },
-    imgCheck (v) {
-      if (v) return v
-      return 'https://cdn.vuetifyjs.com/images/cards/foster.jpg'
-    }
-  },
   methods: {
     async list () {
       this.loading = true // 로딩 만들기 팁 (시작과 끝)
-      const r = await this.$axios.get('/admin/users', {
+      const r = await this.$axios.get('/admin/users', { // functions/admin/index.js와 이어짐
         params: {
           offset: this.options.page > 0 ? (this.options.page - 1) * this.options.itemsPerPage : 0,
           limit: this.options.itemsPerPage,
@@ -185,10 +153,7 @@ export default {
       },
       // 사용자가 입력을 기다리는 시간(밀리세컨드) 입니다.
       500
-    ),
-    openModal () {
-      this.modalOpen = !this.modalOpen
-    }
+    )
   }
 }
 </script>
