@@ -62,6 +62,19 @@ app.patch('/user/:uid/level', async (req, res) => {
   res.status(200).end()
 })
 
+app.patch('/user/:uid/displayName', async (req, res) => {
+  if (!req.params.uid) return res.status(400).end()
+  // if (!req.body.displayName === undefined) return res.status(400).end()
+  const uid = req.params.uid
+  const displayName = req.body.displayName
+
+  const claims = { displayName: displayName } // defualt : level 2
+  await admin.auth().setCustomUserClaims(uid, claims)
+  await db.collection('users').doc(uid).update(claims)
+
+  res.status(200).end()
+})
+
 app.use(require('../middlewares/error'))
 
 module.exports = app

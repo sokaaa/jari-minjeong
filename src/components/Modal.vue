@@ -110,10 +110,13 @@ export default {
     async createWithEmailAndPassword () {
       if (!this.$refs.form.validate()) return this.$toasted.global.error('입력 폼을 올바르게 작성해주세요.')
       await this.$firebase.auth().createUserWithEmailAndPassword(this.form.email, this.form.password)
-      const user = this.$firebase.auth().currentUser
+      const user = this.$firebase.auth().currentUser // 회원가입 시 바로 로그인이 얘 때문인 듯 // 아닌걸로
       // eslint-disable-next-line no-unused-vars
       const result = await user.updateProfile({ // db에 onCreate 때문에 이게 저장 안되는 문제 어떻게 해결?
         displayName: `${this.form.lastName} ${this.form.firstName}`
+      })
+      this.$axios.patch(`/admin/user/${user.uid}/displayName`, {
+        displayName: user.displayName
       })
       // console.log(result)
     }
