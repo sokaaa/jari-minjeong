@@ -75,6 +75,37 @@ app.patch('/user/:uid/displayName', async (req, res) => {
   res.status(200).end()
 })
 
+app.post('/user/:email', async (req, res) => {
+  if (!req.params.email) return res.status(400).end()
+
+  const email = req.params.email
+  const password = req.body.password
+  const displayName = req.body.displayName
+
+  await admin.auth().createUser({
+    uid: email,
+    email: email,
+    // emailVerified: false,
+    // phoneNumber: '+11234567890',
+    password: password,
+    displayName: displayName,
+    // photoURL: 'http://www.example.com/12345678/photo.png',
+    disabled: false
+  }) // 이제 레벨이랑 db 저장까지 합쳐보자 // functions의 index 참고
+
+  res.status(200).end()
+})
+
+/*
+admin.auth().deleteUser(uid)
+  .then(function() {
+    console.log('Successfully deleted user');
+  })
+  .catch(function(error) {
+    console.log('Error deleting user:', error);
+  });
+  */
+
 app.use(require('../middlewares/error'))
 
 module.exports = app

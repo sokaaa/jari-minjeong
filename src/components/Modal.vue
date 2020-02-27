@@ -62,7 +62,7 @@
           required
         ></v-checkbox>
         <v-spacer></v-spacer>
-        <v-btn color="primary" :disabled="!valid" @click="createWithEmailAndPassword">
+        <v-btn color="primary" :disabled="!valid" @click="createByAdmin">
           회원가입
         </v-btn>
       </v-card-actions>
@@ -119,6 +119,18 @@ export default {
         displayName: user.displayName
       })
       // console.log(result)
+    },
+    async createByAdmin () {
+      if (!this.$refs.form.validate()) return this.$toasted.global.error('입력 폼을 올바르게 작성해주세요.')
+      await this.$axios.post(`/admin/user/${this.form.email}`, {
+        // email: 'user@example.com', //이미 params에 담김
+        // emailVerified: false,
+        // phoneNumber: '+11234567890',
+        password: this.form.password,
+        displayName: `${this.form.lastName} ${this.form.firstName}`,
+        // photoURL: 'http://www.example.com/12345678/photo.png',
+        disabled: false
+      })
     }
   }
 }
