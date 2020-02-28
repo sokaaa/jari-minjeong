@@ -14,9 +14,8 @@
             class="headline mb-2"
             v-text="item.email"
             ></v-list-item-title>
-
-            <!-- <v-list-item-subtitle v-text="item.displayName | nameCheck"></v-list-item-subtitle> -->
             <v-list-item-subtitle>{{item.displayName | nameCheck}}</v-list-item-subtitle>
+            <!--item의 level 의 값이, levels 에 있는 value 값 중 하나로 할당된다-->
             <v-select
                 class="ma-2"
                 v-model="item.level"
@@ -25,6 +24,11 @@
                 hide-details
                 @change="levelChange(item)"
             ></v-select>
+            <v-btn
+                @click="deleteByAdmin(item)">
+              <v-icon>mdi-delete</v-icon>
+              삭제
+            </v-btn>
         </v-list-item-content>
         </v-list-item>
     </v-card>
@@ -56,7 +60,7 @@ export default {
   methods: {
     levelChange (v) {
       this.loading = true
-      this.$axios.patch(`/admin/user/${v.uid}/level`, {
+      this.$axios.patch(`/admin/user/${v.uid}/changeclient/level`, {
         level: v.level
       })
         .catch(e => {
@@ -65,8 +69,17 @@ export default {
         .finally(() => {
           this.loading = false
         })
+    },
+    async deleteByAdmin (v) {
+      // this.loading = true
+      await this.$axios.delete(`/admin/user/${v.uid}/deleteclient`)
+        .catch(e => {
+          this.$toasted.global.error(e.message)
+        })
+        // .finally(() => {
+        //   this.loading = false
+        // })
     }
   }
-
 }
 </script>

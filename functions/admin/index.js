@@ -49,62 +49,48 @@ app.get('/search', async (req, res) => {
   res.send(items)
 })
 
-app.patch('/user/:uid/level', async (req, res) => {
+// 개인검색 조금 수정해서 팀 검색 만들기
+
+app.post('/user/:empNo/createclient', async (req, res) => {
+  if (!req.params.empNo) return res.status(400).end()
+
+  const uid = req.params.empNo
+  const email = req.body.email
+  const password = req.params.empNo
+  const displayName = req.body.displayName
+  const level = req.body.level
+
+  const d = {
+    uid, email, displayName, password, level
+  }
+
+  await db.collection('users').doc(uid).set(d)
+
+  res.status(200).end()
+})
+
+app.patch('/user/:uid/changeclient/level', async (req, res) => {
   if (!req.params.uid) return res.status(400).end()
-  if (!req.body.level === undefined) return res.status(400).end()
+  // if (!req.body.level === undefined) return res.status(400).end()
   const uid = req.params.uid
   const level = req.body.level
 
   const claims = { level: level } // defualt : level 2
-  await admin.auth().setCustomUserClaims(uid, claims)
   await db.collection('users').doc(uid).update(claims)
 
   res.status(200).end()
 })
 
-app.patch('/user/:uid/displayName', async (req, res) => {
+app.delete('user/:uid/deleteclient', async (req, res) => {
   if (!req.params.uid) return res.status(400).end()
-  // if (!req.body.displayName === undefined) return res.status(400).end()
   const uid = req.params.uid
-  const displayName = req.body.displayName
 
-  const claims = { displayName: displayName } // defualt : level 2
-  await admin.auth().setCustomUserClaims(uid, claims)
-  await db.collection('users').doc(uid).update(claims)
+  await db.collection('users').doc(uid).delete() // 강의 듣고 고치자
 
   res.status(200).end()
 })
 
-app.post('/user/:email', async (req, res) => {
-  if (!req.params.email) return res.status(400).end()
-
-  const email = req.params.email
-  const password = req.body.password
-  const displayName = req.body.displayName
-
-  await admin.auth().createUser({
-    uid: email,
-    email: email,
-    // emailVerified: false,
-    // phoneNumber: '+11234567890',
-    password: password,
-    displayName: displayName,
-    // photoURL: 'http://www.example.com/12345678/photo.png',
-    disabled: false
-  }) // 이제 레벨이랑 db 저장까지 합쳐보자 // functions의 index 참고
-
-  res.status(200).end()
-})
-
-/*
-admin.auth().deleteUser(uid)
-  .then(function() {
-    console.log('Successfully deleted user');
-  })
-  .catch(function(error) {
-    console.log('Error deleting user:', error);
-  });
-  */
+// auth 안 건드는데 궅이 axios로 할 이유가 있나..?
 
 app.use(require('../middlewares/error'))
 

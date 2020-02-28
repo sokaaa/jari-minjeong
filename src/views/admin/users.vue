@@ -2,7 +2,7 @@
 /* eslint-disable no-unused-vars */
 <template>
   <v-container grid-list-md>
-     <demo-login-modal/>
+     <create-client-modal/>
     <v-card>
       <v-toolbar
         dark
@@ -61,21 +61,21 @@
       </v-container>
     </v-card>
     <v-spacer></v-spacer>
-     <button
-      class="btn green"
-      @click="$modal.show('demo-login')">
-      popup
-    </button>
+    <v-card-actions>
+        <v-btn color="primary" @click="$modal.show('create-client')">
+          회원등록
+        </v-btn>
+      </v-card-actions>
   </v-container>
 </template>
 
 <script>
-import DemoLoginModal from '@/components/Modal'
+import CreateClientModal from '@/components/CreateClientModal'
 import UserCard from '@/components/userCard'
 import _ from 'lodash' // 연속 입력 꼬임방지 위한 debounce 이용
 export default {
   components: {
-    DemoLoginModal,
+    CreateClientModal,
     UserCard
   },
   data () {
@@ -150,9 +150,7 @@ export default {
           .finally(() => {
             this.loadingSearch = false
           })
-      },
-      // 사용자가 입력을 기다리는 시간(밀리세컨드) 입니다.
-      500
+      }, 500
     )
   }
 }
