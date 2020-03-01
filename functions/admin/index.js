@@ -40,11 +40,11 @@ app.get('/users', async (req, res) => {
 })
 
 app.get('/search', async (req, res) => {
-  const s = await db.collection('users').where('email', '>=', req.query.search).limit(3).get()
+  const s = await db.collection('users').where('displayName', '>=', req.query.search).limit(3).get()
 
   const items = []
   s.forEach(v => {
-    items.push(v.data().email) // 콤보 박스에 뜨는 데이터 속성
+    items.push(v.data().displayName) // 콤보 박스에 뜨는 데이터 속성
   })
   res.send(items)
 })
@@ -59,9 +59,10 @@ app.post('/user/:empNo/createclient', async (req, res) => {
   const password = req.params.empNo
   const displayName = req.body.displayName
   const level = req.body.level
+  const teamName = req.body.teamName
 
   const d = {
-    uid, email, displayName, password, level
+    uid, email, displayName, password, level, teamName
   }
 
   await db.collection('users').doc(uid).set(d)

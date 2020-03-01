@@ -29,6 +29,14 @@
           :rules="[rule.required, rule.minLength(6), rule.maxLength(50)]"
           required
           ></v-text-field>
+          <v-select
+            class="ma-2"
+            label="소속"
+            v-model="form.teamName"
+            :items="teamNames"
+            solo
+            hide-details
+            ></v-select>
       </v-card-text>
 
       <v-card-actions>
@@ -48,13 +56,20 @@ export default {
   name: 'CreateClientModal',
   data () {
     return {
+      teamNames: [
+        { value: 'CM', text: 'CM' },
+        { value: 'TA', text: 'TA' },
+        { value: 'SO', text: 'SO' },
+        { value: 'NoTeam', text: 'NoTeam' }
+      ],
       modalWidth: MODAL_WIDTH,
       form: {
         firstName: '',
         lastName: '',
         email: '',
         empNo: '',
-        level: 2
+        level: 2,
+        teamName: 'NoTeam'
       },
       agree: false,
       rule: {
@@ -81,7 +96,8 @@ export default {
         // phoneNumber: '+11234567890',
         password: this.form.empNo,
         displayName: `${this.form.lastName} ${this.form.firstName}`,
-        level: this.form.level
+        level: this.form.level,
+        teamName: this.form.teamName
         // photoURL: 'http://www.example.com/12345678/photo.png',
         // disabled: false
       })

@@ -1,5 +1,3 @@
-/* eslint-disable vue/no-unused-components */
-/* eslint-disable no-unused-vars */
 <template>
   <v-container grid-list-md>
      <create-client-modal/>
@@ -11,16 +9,16 @@
         <v-toolbar-title>회원 관리</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-autocomplete
-          v-model="email"
+          v-model="displayName"
           :loading="loadingSearch"
-          :items="emails"
+          :items="displayNames"
           :search-input.sync="search"
           cache-items
           class="mx-4"
           flat
           hide-no-data
           hide-details
-          label="이메일을 입력하세요"
+          label="이름을 입력하세요"
           solo-inverted
           clearable
         ></v-autocomplete>
@@ -46,7 +44,7 @@
               <v-flex
                 v-else
                 v-for="item in props.items"
-                :key="item.email"
+                :key="item.displayName"
                 xs12
                 sm6
                 md4
@@ -99,8 +97,8 @@ export default {
         sortDesc: [false]
       },
       search: '',
-      emails: [],
-      email: null,
+      displayNames: [],
+      displayName: null,
       loadingSearch: false
     }
   },
@@ -112,7 +110,7 @@ export default {
       deep: true
     },
     search (val) {
-      val && val !== this.email && this.searchEmails(val)
+      val && val !== this.displayName && this.searchNames(val)
     },
     email (n, o) { // new, old
       if (n !== o) this.list()
@@ -134,7 +132,7 @@ export default {
       this.items = r.data.items
       this.loading = false
     },
-    searchEmails: _.debounce(
+    searchNames: _.debounce(
       function (val) {
         this.loadingSearch = true
 
@@ -142,7 +140,7 @@ export default {
           params: { search: this.search }
         })
           .then(({ data }) => {
-            this.emails = data
+            this.displayNames = data
           })
           .catch(e => {
             this.$toasted.global.error(e.message)

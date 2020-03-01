@@ -41,7 +41,8 @@ exports.createClientAccount = functions.database.ref('/users/{uid}')
       email: change.after.val().email,
       password: change.after.val().password,
       displayName: change.after.val().displayName,
-      level: change.after.val().level
+      level: change.after.val().level,
+      teamName: change.after.val().teamName
     })
   })
 
@@ -51,7 +52,8 @@ exports.changeClientAccount = functions.database.ref('/users/{uid}')
       email: change.after.val().email,
       password: change.after.val().password,
       displayName: change.after.val().displayName,
-      level: change.after.val().level
+      level: change.after.val().level,
+      teamName: change.after.val().teamName
     })
   })
 
